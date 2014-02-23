@@ -34,20 +34,10 @@
 - (BOOL)resignFirstResponder
 {
     [super resignFirstResponder];
-    NSLog(@"text field return method called");
     [_textField resignFirstResponder];
     [[MSGRUsernameStore sharedStore] addUsername:[_textField text]];
     [[self navigationController] popViewControllerAnimated:true];
     return YES;
 }
-
-
-//- (BOOL)textFieldShouldReturn:(UITextField *)textField
-//{
-//    [textField resignFirstResponder];
-//    [[MSGRUsernameStore sharedStore] addUsername:[textField text]];
-//    [self dismissViewControllerAnimated:YES completion:nil];
-//    return true;
-//}
 
 @end

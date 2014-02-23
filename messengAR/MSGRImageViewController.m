@@ -29,10 +29,8 @@
     if (self)
     {
         _locationManager = [CLLocationManager new];
-        [_locationManager setDelegate:self];
         [_locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
         _motionManager = [[CMMotionManager alloc] init];
-        
     }
     return self;
 }
@@ -101,8 +99,12 @@
         [message setPitch:[attitude pitch]];
         [message setRoll:[attitude roll]];
         [message setHeading:trueHeading];
-                
+        
+        // TODO: delete this test code
         [[MSGRMessageStore sharedStore] addMessage:message];
+        // end TODO
+        
+        // send the message to the server
         
         [[self navigationController] setNavigationBarHidden:false];
         [_imageView setImage:image];

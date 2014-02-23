@@ -22,12 +22,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
-    // TODO clean this up
-    MSGRMessage *testMessage = [[MSGRMessage alloc] init];
-    [testMessage setImage:[UIImage imageWithContentsOfFile:@"tcnj.jpg"]];
-    [[MSGRMessageStore sharedStore] addMessage:testMessage];
-    // end TODO lol
     
     UINavigationController *navControl = [[UINavigationController alloc] init];
     MSGRMessagesListViewController *messagesListControl = [[MSGRMessagesListViewController alloc] init];
@@ -47,6 +41,16 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    MSGRMessage *message = [[MSGRMessage alloc] init];
+    
+    // get message characteristics from user dictionary
+    // make message with the characteristics
+        // [message setYaw:[userInfo valueForKey:@"yaw"]];
+    // add message to message store
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

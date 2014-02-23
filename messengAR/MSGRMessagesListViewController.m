@@ -10,6 +10,12 @@
 #import "MSGRImageViewController.h"
 #import "MSGRMessageStore.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <CoreMotion/CoreMotion.h>
+#import <CoreLocation/CoreLocation.h>
+#import "MSGRMessage.h"
+
+#define TOLERANCE 0.21
+#define PITCH_TOLERANCE 4.6
 
 @interface MSGRMessagesListViewController ()
 
@@ -21,7 +27,9 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        // Custom initialization
+        _locationManager = [CLLocationManager new];
+        [_locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
+        _motionManager = [[CMMotionManager alloc] init];
     }
     return self;
 }
@@ -31,6 +39,11 @@
     [super viewDidLoad];
     [[self navigationItem] setTitle:@"Messages"];
     [[self navigationItem] setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(sendPicture)]];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [[self tableView] reloadData];
 }
 
 - (void)sendPicture
@@ -45,30 +58,67 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // return [[[MSGRMessageStore sharedStore] allMessages] count];
-    return 3;
+    return [[[MSGRMessageStore sharedStore] allMessages] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [[UITableViewCell alloc] init];
     [[cell textLabel] setText:[NSString stringWithFormat:@"%d", [indexPath row]]];
-    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    MSGRMessage *message = [[[MSGRMessageStore sharedStore] allMessages] objectAtIndex:[indexPath row]];
-    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
-    [imagePicker setDelegate:self];
-    [imagePicker setSourceType:UIImagePickerControllerSourceTypeCamera];
-    [imagePicker setMediaTypes:@[(NSString *) kUTTypeImage]];
-    [imagePicker setAllowsEditing:NO];
+    [_locationManager startUpdatingLocation];
+    [_locationManager startUpdatingHeading];
+    [_motionManager startGyroUpdates];
+    [_motionManager startDeviceMotionUpdates];
+    
+    _message = [[[MSGRMessageStore sharedStore] allMessages] objectAtIndex:[indexPath row]];
+    _imagePicker = [[UIImagePickerController alloc] init];
+    [_imagePicker setDelegate:self];
+    [_imagePicker setSourceType:UIImagePickerControllerSourceTypeCamera];
+    [_imagePicker setMediaTypes:@[(NSString *) kUTTypeImage]];
+    [_imagePicker setAllowsEditing:NO];
     // [imagePicker setShowsCameraControls:false];
     // [imagePicker setNavigationBarHidden:true];
-    [self presentViewController:imagePicker animated:YES completion:nil];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(checkAttitude:) userInfo:nil repeats:true];
+    [self presentViewController:_imagePicker animated:YES completion:nil];
+}
+
+- (void)checkAttitude:(NSTimer *)timer
+{
+    CLLocation *location = [_locationManager location];
+    CLHeading *heading = [_locationManager heading];
+    CLLocationDirection trueHeading = [heading trueHeading];
+    CMDeviceMotion *deviceMotion = [_motionManager deviceMotion];
+    CMAttitude *attitude = [deviceMotion attitude];
+    
+    NSLog(@"%f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f", location.coordinate.latitude, _message.location.coordinate.latitude,location.coordinate.longitude, _message.location.coordinate.longitude, trueHeading, [_message heading], [attitude yaw], [_message yaw], [attitude pitch], [_message pitch], [attitude roll], [_message roll]);
+    
+    if (fabs(location.coordinate.latitude - _message.location.coordinate.latitude) < fabs(TOLERANCE * _message.location.coordinate.latitude) && fabs(location.coordinate.longitude - _message.location.coordinate.longitude) < fabs(TOLERANCE * _message.location.coordinate.longitude) && fabs(trueHeading - [_message heading]) < fabs(TOLERANCE * [_message heading] && fabs([attitude pitch] - [_message pitch]) < fabs(PITCH_TOLERANCE * [_message pitch])))
+        
+        // && fabs([attitude yaw] - [_message yaw]) < fabs(TOLERANCE * [_message yaw]) && fabs([attitude pitch] - [_message pitch]) < fabs(TOLERANCE * [_message pitch]) && fabs([attitude roll] - [_message roll]) < fabs(TOLERANCE * [_message roll])
+        
+    {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 300, 300)];
+        [label setFont:[UIFont fontWithName:@"Helvetica" size:28.0]];
+        [label setText:@"WINNER"];
+        [_imagePicker setCameraOverlayView:label];
+    }
+    else
+    {
+        [_imagePicker setCameraOverlayView:Nil];
+    }
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [_timer invalidate];
+    _timer = nil;
+    [self dismissViewControllerAnimated:true completion:nil];
 }
 
 /*
