@@ -55,6 +55,8 @@
 {
     [[MSGRMessageStore sharedStore] clear];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager GET:@"http://23.239.12.189:3000/messages.json" parameters:@{@"auth_token": [[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0]} success:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         NSLog(@"JSON: %@", responseObject);
