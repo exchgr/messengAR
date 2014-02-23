@@ -78,7 +78,7 @@
                              @"content":[_message messageText],
                              @"hint":[_message hintText],
 //                             @"message[auth_token]":[[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0],
-                             @"recipient":@"drmmundy@me.com"
+                             @"recipient":[_message recipient]
                              };
 //                             @"message[sender]":[_message sender],
 //                             @"message[recipient]":[_message recipient]

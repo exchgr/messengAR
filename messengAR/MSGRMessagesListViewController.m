@@ -17,8 +17,8 @@
 #import <AFNetworking/AFNetworking.h>
 
 #define GPS_TOLERANCE       0.10
-#define COMPASS_TOLERANCE   0.8
-#define PITCH_TOLERANCE     5.0
+#define COMPASS_TOLERANCE   1.0
+#define PITCH_TOLERANCE     8.0
 
 @interface MSGRMessagesListViewController ()
 
@@ -154,7 +154,7 @@
     {
         NSLog(@"Text should display");
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 300, 300)];
-        [label setFont:[UIFont fontWithName:@"Helvetica" size:28.0]];
+        [label setFont:[UIFont fontWithName:@"Helvetica" size:32.0]];
         [label setText:[_message messageText]];
         [_imagePicker setCameraOverlayView:label];
     }
