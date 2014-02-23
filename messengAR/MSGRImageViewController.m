@@ -121,16 +121,12 @@
 
 - (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
     CGPoint location = [recognizer locationInView:[recognizer.view superview]];
-    NSLog(@"%f", location.x);
-    NSLog(@"%f", location.y);
     _activeTextField = [[UITextField alloc] initWithFrame:CGRectMake(location.x, location.y, 160, 31)];
     [_activeTextField addTarget:self action:@selector(resignFirstResponder)forControlEvents:UIControlEventEditingDidEndOnExit];
     [[self view] addSubview:_activeTextField];
     [_activeTextField becomeFirstResponder];
-    CGPoint point;
-    point.x = location.x;
-    point.y = location.y;
-    [_message setPoint:point];
+    [_message setPointX:location.x];
+    [_message setPointY:location.y];
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {

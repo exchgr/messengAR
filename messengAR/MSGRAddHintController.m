@@ -8,6 +8,7 @@
 
 #import "MSGRAddHintController.h"
 #import "MSGRMessage.h"
+#import <AFNetworking/AFNetworking.h>
 
 @interface MSGRAddHintController ()
 
@@ -56,7 +57,30 @@
 {
     [_message setHintText:[_hintField text]];
     [_message setRecipient:[_usernameField text]];
+    
     // send message to server
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *params = @{@"message[yaw]":[NSNumber numberWithDouble:[_message yaw]],
+                            @"message[pitch]":[NSNumber numberWithDouble:[_message pitch]],
+                            @"message[roll]":[NSNumber numberWithDouble:[_message roll]],
+                            @"message[heading]":[NSNumber numberWithDouble:[_message heading]],
+                             @"message[pointX]":[NSNumber numberWithDouble:[_message pointX]],
+                             @"message[pointY]":[NSNumber numberWithDouble:[_message pointY]],
+                             @"message[location]":[_message location],
+                             @"message[messageText]":[_message messageText],
+                             @"message[hintText]":[_message hintText],
+                             @"message[sender]":[_message sender],
+                             @"message[recipient]":[_message recipient]};
+    
+//    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
+    
+    [manager POST:@"http://mysite.com/myobject" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject)
+                                                                            {
+                                                                                NSLog(@"JSON: %@", responseObject);
+                                                                            } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+                                                                                NSLog(@"Error: %@", error);
+                                                                            }];
+    [self dismissViewControllerAnimated:true completion:nil];
 }
 
 - (void)didReceiveMemoryWarning

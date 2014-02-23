@@ -13,9 +13,10 @@
 #import <CoreMotion/CoreMotion.h>
 #import <CoreLocation/CoreLocation.h>
 #import "MSGRMessage.h"
+#import <AFNetworking/AFNetworking.h>
 
-#define TOLERANCE       0.275
-#define PITCH_TOLERANCE 5.34
+#define TOLERANCE       0.35
+#define PITCH_TOLERANCE 6
 
 @interface MSGRMessagesListViewController ()
 
@@ -40,6 +41,39 @@
     [[self navigationItem] setTitle:@"Messages"];
     [[self navigationItem] setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(sendPicture)]];
     [[self navigationItem] setBackBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Log out" style:UIBarButtonItemStyleBordered target:nil action:nil]]; // should work (?) but doesn't :(
+    CGRect frame = CGRectMake(0, [[UIScreen mainScreen] bounds].size.height - 44, [[UIScreen mainScreen] bounds].size.width, 44);
+    _toolbar = [[UIToolbar alloc] initWithFrame:frame];
+    [_toolbar sizeToFit];
+    [[[self navigationController] view] addSubview:_toolbar];
+//    [[self view] addSubview:_toolbar];
+    [_toolbar setItems:@[[[UIBarButtonItem alloc] initWithTitle:@"Refresh" style:UIBarButtonItemStylePlain target:self action:@selector(refresh)]]];
+}
+
+- (void)refresh
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:@"http://example.com/resources.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
+    {
+        NSLog(@"JSON: %@", responseObject);
+        NSDictionary *dictionary = responseObject;
+        MSGRMessage *message = [[MSGRMessage alloc] init];
+        [message setRoll:[[dictionary valueForKey:@"message[roll]"] doubleValue]];
+        [message setYaw:[[dictionary valueForKey:@"message[yaw]"] doubleValue]];
+        [message setPitch:[[dictionary valueForKey:@"message[pitch]"] doubleValue]];
+        [message setHeading:[[dictionary valueForKey:@"message[heading]"] doubleValue]];
+        [message setPointX:[[dictionary valueForKey:@"message[pointX]"] doubleValue]];
+        [message setPointY:[[dictionary valueForKey:@"message[pointY]"] doubleValue]];
+        [message setLocation:[dictionary valueForKey:@"message[location]"]];
+        [message setMessageText:[dictionary valueForKey:@"message[messageText]"]];
+        [message setHintText:[dictionary valueForKey:@"message[hintText]"]];
+        [message setSender:[dictionary valueForKey:@"message[sender]"]];
+        [[MSGRMessageStore sharedStore] addMessage:message];
+        [[self tableView] reloadData];
+    }
+         failure:^(AFHTTPRequestOperation *operation, NSError *error)
+    {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -64,8 +98,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    MSGRMessage *message = [[[MSGRMessageStore sharedStore] allMessages] objectAtIndex:[[[MSGRMessageStore sharedStore] allMessages] count] - (1 + [indexPath row])];
+    
     UITableViewCell *cell = [[UITableViewCell alloc] init];
-    [[cell textLabel] setText:[NSString stringWithFormat:@"%d", [indexPath row]]];
+    [[cell textLabel] setText:[NSString stringWithFormat:@"%@", [message sender]]];
     return cell;
 }
 

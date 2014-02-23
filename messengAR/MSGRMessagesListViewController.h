@@ -19,5 +19,6 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) CMMotionManager *motionManager;
 @property (strong, nonatomic) MSGRMessage *message;
+@property (strong, nonatomic) UIToolbar *toolbar;
 
 @end

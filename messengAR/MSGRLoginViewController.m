@@ -8,6 +8,7 @@
 
 #import "MSGRLoginViewController.h"
 #import "MSGRMessagesListViewController.h"
+#import "MSGRUsernameStore.h"
 
 @interface MSGRLoginViewController ()
 
@@ -19,6 +20,7 @@
 {
     NSString *email = [_emailField text];
     NSString *password = [_passwordField text];
+    [[MSGRUsernameStore sharedStore] addUsername:email];
     // validate(?)
     // push next view controller:
     MSGRMessagesListViewController *listControl = [[MSGRMessagesListViewController alloc] init];

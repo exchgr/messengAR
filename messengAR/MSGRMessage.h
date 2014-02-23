@@ -15,7 +15,8 @@
 @property (nonatomic, assign) double pitch;
 @property (nonatomic, assign) double roll;
 @property (nonatomic, assign) CLLocationDirection heading;
-@property (nonatomic, assign) CGPoint point;
+@property (nonatomic, assign) double pointX;
+@property (nonatomic, assign) double pointY;
 @property (strong, nonatomic) CLLocation *location;
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) NSString *messageText;
