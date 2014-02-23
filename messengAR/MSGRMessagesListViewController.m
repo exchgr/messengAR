@@ -55,7 +55,7 @@
 {
     [[MSGRMessageStore sharedStore] clear];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:@"23.239.12.189/messages.json" parameters:[[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0] success:^(AFHTTPRequestOperation *operation, id responseObject)
+    [manager GET:@"23.239.12.189/messages.json" parameters:@{@"auth_token" : [[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0]} success:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         NSLog(@"JSON: %@", responseObject);
         NSArray *array = responseObject;

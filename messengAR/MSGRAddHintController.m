@@ -10,6 +10,7 @@
 #import "MSGRMessage.h"
 #import <AFNetworking/AFNetworking.h>
 #import "MSGRUsernameStore.h"
+#import <CoreLocation/CoreLocation.h>
 
 @interface MSGRAddHintController ()
 
@@ -61,24 +62,34 @@
     
     // send message to server
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSDictionary *params = @{@"message[yaw]":[NSNumber numberWithDouble:[_message yaw]],
-                            @"message[pitch]":[NSNumber numberWithDouble:[_message pitch]],
-                            @"message[roll]":[NSNumber numberWithDouble:[_message roll]],
-                            @"message[heading]":[NSNumber numberWithDouble:[_message heading]],
-                             @"message[screenX]":[NSNumber numberWithDouble:[_message pointX]],
-                             @"message[screenY]":[NSNumber numberWithDouble:[_message pointY]],
-                             @"message[location]":[_message location],
-                             @"message[content]":[_message messageText],
-                             @"message[hint]":[_message hintText],
-                             @"message[auth_token]":[[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0]
-                    
+    double latitude = [_message location].coordinate.latitude;
+    double longitude = [_message location].coordinate.longitude;
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+   // manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    NSDictionary *params = @{@"yaw":[NSNumber numberWithDouble:[_message yaw]],
+                            @"pitch":[NSNumber numberWithDouble:[_message pitch]],
+                            @"roll":[NSNumber numberWithDouble:[_message roll]],
+                            @"heading":[NSNumber numberWithDouble:[_message heading]],
+                             @"screenX":[NSNumber numberWithDouble:[_message pointX]],
+                             @"screenY":[NSNumber numberWithDouble:[_message pointY]],
+                             @"longitude":[NSNumber numberWithDouble:longitude],
+                             @"latitude":[NSNumber numberWithDouble:latitude],
+                             @"content":[_message messageText],
+                             @"hint":[_message hintText],
+//                             @"message[auth_token]":[[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0],
+                             @"recipient":@"drmmundy@me.com"
+                             };
 //                             @"message[sender]":[_message sender],
 //                             @"message[recipient]":[_message recipient]
-                             };
+                             
     
 //    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
     
-    [manager POST:@"23.239.12.189/messages.json?auth_token" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject)
+    NSString *postString = @"http://23.239.12.189:3000/messages.json?auth_token=";
+    postString = [postString stringByAppendingString:[[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0]];
+    
+    [manager POST:postString parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject)
                                                                             {
                                                                                 NSLog(@"JSON: %@", responseObject);
                                                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error){
