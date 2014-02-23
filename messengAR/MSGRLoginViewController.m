@@ -18,9 +18,10 @@
 
 - (IBAction)logIn:(id)sender
 {
-    NSString *email = [_emailField text];
-    NSString *password = [_passwordField text];
-    [[MSGRUsernameStore sharedStore] addUsername:email];
+    NSString *token = [_emailField text];
+    [[MSGRUsernameStore sharedStore] addUsername:token];
+//    NSString *password = [_passwordField text];
+//    [[MSGRUsernameStore sharedStore] addUsername:email];
     // validate(?)
     // push next view controller:
     MSGRMessagesListViewController *listControl = [[MSGRMessagesListViewController alloc] init];

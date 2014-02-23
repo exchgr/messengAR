@@ -70,4 +70,12 @@
     return [NSKeyedArchiver archiveRootObject:allMessages toFile:path];
 }
 
+- (void)clear
+{
+    for (MSGRMessage *m in allMessages)
+    {
+        [allMessages removeObjectIdenticalTo:m];
+    }
+}
+
 @end

@@ -9,6 +9,7 @@
 #import "MSGRAddHintController.h"
 #import "MSGRMessage.h"
 #import <AFNetworking/AFNetworking.h>
+#import "MSGRUsernameStore.h"
 
 @interface MSGRAddHintController ()
 
@@ -64,17 +65,20 @@
                             @"message[pitch]":[NSNumber numberWithDouble:[_message pitch]],
                             @"message[roll]":[NSNumber numberWithDouble:[_message roll]],
                             @"message[heading]":[NSNumber numberWithDouble:[_message heading]],
-                             @"message[pointX]":[NSNumber numberWithDouble:[_message pointX]],
-                             @"message[pointY]":[NSNumber numberWithDouble:[_message pointY]],
+                             @"message[screenX]":[NSNumber numberWithDouble:[_message pointX]],
+                             @"message[screenY]":[NSNumber numberWithDouble:[_message pointY]],
                              @"message[location]":[_message location],
-                             @"message[messageText]":[_message messageText],
-                             @"message[hintText]":[_message hintText],
-                             @"message[sender]":[_message sender],
-                             @"message[recipient]":[_message recipient]};
+                             @"message[content]":[_message messageText],
+                             @"message[hint]":[_message hintText],
+                             @"message[auth_token]":[[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0]
+                    
+//                             @"message[sender]":[_message sender],
+//                             @"message[recipient]":[_message recipient]
+                             };
     
 //    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
     
-    [manager POST:@"http://mysite.com/myobject" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject)
+    [manager POST:@"23.239.12.189/messages.json?auth_token" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject)
                                                                             {
                                                                                 NSLog(@"JSON: %@", responseObject);
                                                                             } failure:^(AFHTTPRequestOperation *operation, NSError *error){

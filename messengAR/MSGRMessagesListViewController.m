@@ -13,10 +13,12 @@
 #import <CoreMotion/CoreMotion.h>
 #import <CoreLocation/CoreLocation.h>
 #import "MSGRMessage.h"
+#import "MSGRUsernameStore.h"
 #import <AFNetworking/AFNetworking.h>
 
-#define TOLERANCE       0.35
-#define PITCH_TOLERANCE 6
+#define GPS_TOLERANCE       0.10
+#define COMPASS_TOLERANCE   0.43
+#define PITCH_TOLERANCE     0.66
 
 @interface MSGRMessagesListViewController ()
 
@@ -51,23 +53,28 @@
 
 - (void)refresh
 {
+    [[MSGRMessageStore sharedStore] clear];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:@"http://example.com/resources.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
+    [manager GET:@"23.239.12.189/messages.json" parameters:[[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0] success:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         NSLog(@"JSON: %@", responseObject);
-        NSDictionary *dictionary = responseObject;
-        MSGRMessage *message = [[MSGRMessage alloc] init];
-        [message setRoll:[[dictionary valueForKey:@"message[roll]"] doubleValue]];
-        [message setYaw:[[dictionary valueForKey:@"message[yaw]"] doubleValue]];
-        [message setPitch:[[dictionary valueForKey:@"message[pitch]"] doubleValue]];
-        [message setHeading:[[dictionary valueForKey:@"message[heading]"] doubleValue]];
-        [message setPointX:[[dictionary valueForKey:@"message[pointX]"] doubleValue]];
-        [message setPointY:[[dictionary valueForKey:@"message[pointY]"] doubleValue]];
-        [message setLocation:[dictionary valueForKey:@"message[location]"]];
-        [message setMessageText:[dictionary valueForKey:@"message[messageText]"]];
-        [message setHintText:[dictionary valueForKey:@"message[hintText]"]];
-        [message setSender:[dictionary valueForKey:@"message[sender]"]];
-        [[MSGRMessageStore sharedStore] addMessage:message];
+        NSArray *array = responseObject;
+        for (NSDictionary *dictionary in array)
+        {
+            MSGRMessage *message = [[MSGRMessage alloc] init];
+            [message setRoll:[[dictionary valueForKey:@"message[roll]"] doubleValue]];
+            [message setYaw:[[dictionary valueForKey:@"message[yaw]"] doubleValue]];
+            [message setPitch:[[dictionary valueForKey:@"message[pitch]"] doubleValue]];
+            [message setHeading:[[dictionary valueForKey:@"message[heading]"] doubleValue]];
+            [message setPointX:[[dictionary valueForKey:@"message[screenX]"] doubleValue]];
+            [message setPointY:[[dictionary valueForKey:@"message[screenY]"] doubleValue]];
+            [message setLocation:[dictionary valueForKey:@"message[location]"]];
+            [message setMessageText:[dictionary valueForKey:@"message[content]"]];
+            [message setHintText:[dictionary valueForKey:@"message[hint]"]];
+            
+            //        [message setSender:[dictionary valueForKey:@"message[sender]"]];
+            [[MSGRMessageStore sharedStore] addMessage:message];
+        }
         [[self tableView] reloadData];
     }
          failure:^(AFHTTPRequestOperation *operation, NSError *error)
@@ -101,7 +108,9 @@
     MSGRMessage *message = [[[MSGRMessageStore sharedStore] allMessages] objectAtIndex:[[[MSGRMessageStore sharedStore] allMessages] count] - (1 + [indexPath row])];
     
     UITableViewCell *cell = [[UITableViewCell alloc] init];
-    [[cell textLabel] setText:[NSString stringWithFormat:@"%@", [message sender]]];
+//    [[cell textLabel] setText:[NSString stringWithFormat:@"%@", [message sender]]];
+    [[cell textLabel] setText:@"Foo"];
+
     return cell;
 }
 
@@ -133,14 +142,14 @@
     CMDeviceMotion *deviceMotion = [_motionManager deviceMotion];
     CMAttitude *attitude = [deviceMotion attitude];
     
-    NSLog(@"%f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f \n %f", location.coordinate.latitude, _message.location.coordinate.latitude,location.coordinate.longitude, _message.location.coordinate.longitude, trueHeading, [_message heading], [attitude yaw], [_message yaw], [attitude pitch], [_message pitch], [attitude roll], [_message roll]);
+    NSLog(@"%f \n %f \n %f \n %f \n %f \n %f \n %f \n %f", location.coordinate.latitude, _message.location.coordinate.latitude,location.coordinate.longitude, _message.location.coordinate.longitude, trueHeading, [_message heading], [attitude pitch], [_message pitch]);
     
-    if (fabs(location.coordinate.latitude - _message.location.coordinate.latitude) < fabs(TOLERANCE * _message.location.coordinate.latitude) && fabs(location.coordinate.longitude - _message.location.coordinate.longitude) < fabs(TOLERANCE * _message.location.coordinate.longitude) && fabs(trueHeading - [_message heading]) < fabs(TOLERANCE * [_message heading] && fabs([attitude pitch] - [_message pitch]) < fabs(PITCH_TOLERANCE * [_message pitch])))
+    if (fabs(location.coordinate.latitude - _message.location.coordinate.latitude) < fabs(GPS_TOLERANCE * _message.location.coordinate.latitude) && fabs(location.coordinate.longitude - _message.location.coordinate.longitude) < fabs(GPS_TOLERANCE * _message.location.coordinate.longitude) && fabs(trueHeading - [_message heading]) < fabs(COMPASS_TOLERANCE * [_message heading] && fabs([attitude pitch] - [_message pitch]) < fabs(PITCH_TOLERANCE * [_message pitch])))
         
         // && fabs([attitude yaw] - [_message yaw]) < fabs(TOLERANCE * [_message yaw]) && fabs([attitude pitch] - [_message pitch]) < fabs(TOLERANCE * [_message pitch]) && fabs([attitude roll] - [_message roll]) < fabs(TOLERANCE * [_message roll])
         
     {
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 300, 300)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake([_message pointX], [_message pointY], 300, 300)];
         [label setFont:[UIFont fontWithName:@"Helvetica" size:28.0]];
         [label setText:[_message messageText]];
         [_imagePicker setCameraOverlayView:label];

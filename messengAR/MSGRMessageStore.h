@@ -22,5 +22,6 @@
 - (void)removeMessage:(MSGRMessage *)message;
 - (NSString *)archivePath;
 - (BOOL)saveChanges;
+- (void)clear;
 
 @end
