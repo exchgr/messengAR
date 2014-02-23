@@ -7,6 +7,7 @@
 //
 
 #import "MSGRAppDelegate.h"
+#import "MSGRMessagesListViewController.h"
 
 @implementation MSGRAppDelegate
 
@@ -17,7 +18,15 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
+
+    UINavigationController *navControl = [[UINavigationController alloc] init];
+    MSGRMessagesListViewController *messagesListControl = [[MSGRMessagesListViewController alloc] init];
+    [navControl setViewControllers:@[messagesListControl]];
+    [[self window] setRootViewController:navControl];
+    
+    // put messages list controller inside
+    // present
+    
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
