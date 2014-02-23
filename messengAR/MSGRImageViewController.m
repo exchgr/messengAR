@@ -16,6 +16,8 @@
 #import <CoreMotion/CoreMotion.h>
 #import "MSGRMessage.h"
 #import "MSGRMessageStore.h"
+#import "MSGRUsernameStore.h"
+#import "MSGRAddHintController.h"
 
 @interface MSGRImageViewController ()
 
@@ -92,19 +94,18 @@
         CMDeviceMotion *deviceMotion = [_motionManager deviceMotion];
         CMAttitude *attitude = [deviceMotion attitude];
         
-        MSGRMessage *message = [[MSGRMessage alloc] init];
-        [message setLocation:location];
-        [message setImage:image];
-        [message setYaw:[attitude yaw]];
-        [message setPitch:[attitude pitch]];
-        [message setRoll:[attitude roll]];
-        [message setHeading:trueHeading];
+        _message = [[MSGRMessage alloc] init];
+        [_message setLocation:location];
+        [_message setImage:image];
+        [_message setYaw:[attitude yaw]];
+        [_message setPitch:[attitude pitch]];
+        [_message setRoll:[attitude roll]];
+        [_message setHeading:trueHeading];
+        [_message setSender:[[[MSGRUsernameStore sharedStore] usernames] objectAtIndex:0]];
         
         // TODO: delete this test code
-        [[MSGRMessageStore sharedStore] addMessage:message];
+        [[MSGRMessageStore sharedStore] addMessage:_message];
         // end TODO
-        
-        // send the message to the server
         
         [[self navigationController] setNavigationBarHidden:false];
         [_imageView setImage:image];
@@ -126,6 +127,10 @@
     [_activeTextField addTarget:self action:@selector(resignFirstResponder)forControlEvents:UIControlEventEditingDidEndOnExit];
     [[self view] addSubview:_activeTextField];
     [_activeTextField becomeFirstResponder];
+    CGPoint point;
+    point.x = location.x;
+    point.y = location.y;
+    [_message setPoint:point];
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
@@ -138,15 +143,25 @@
     return NO;
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    _activeTextField = nil;
-    [textField resignFirstResponder];
-    return YES;
+- (BOOL)resignFirstResponder
+{
+    [super resignFirstResponder];
+    [_activeTextField resignFirstResponder];
+    NSLog(@"does this method get called");
+    [_message setMessageText:[_activeTextField text]];
+    return true;
 }
 
 - (void)cancel
 {
     [self dismissViewControllerAnimated:YES completion:Nil];
+}
+
+- (void)send
+{
+    MSGRAddHintController *hintController = [[MSGRAddHintController alloc] init];
+    [hintController setMessage:_message];
+    [[self navigationController] pushViewController:hintController animated:true];
 }
 
 

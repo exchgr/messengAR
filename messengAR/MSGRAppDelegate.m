@@ -11,7 +11,7 @@
 #import "MSGRMessage.h"
 #import "MSGRMessageStore.h"
 #import "MSGRUsernameStore.h"
-#import "MSGRPickUsernameController.h"
+#import "MSGRLoginViewController.h"
 
 @implementation MSGRAppDelegate
 
@@ -24,19 +24,10 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     UINavigationController *navControl = [[UINavigationController alloc] init];
-    MSGRMessagesListViewController *messagesListControl = [[MSGRMessagesListViewController alloc] init];
-    [navControl setViewControllers:@[messagesListControl]];
+    MSGRLoginViewController *loginControl = [[MSGRLoginViewController alloc] init];
+//    MSGRMessagesListViewController *messagesListControl = [[MSGRMessagesListViewController alloc] init];
+    [navControl setViewControllers:@[loginControl]];
     [[self window] setRootViewController:navControl];
-    
-    if ([[[MSGRUsernameStore sharedStore] usernames] count] == 0)
-    {
-        MSGRPickUsernameController *usernameController = [[MSGRPickUsernameController alloc] init];
-    //    [navControl presentViewController:usernameController animated:true completion:nil];
-        [navControl pushViewController:usernameController animated:false];
-    }
-    
-    //
-    //
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];

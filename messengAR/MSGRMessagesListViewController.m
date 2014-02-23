@@ -14,8 +14,8 @@
 #import <CoreLocation/CoreLocation.h>
 #import "MSGRMessage.h"
 
-#define TOLERANCE 0.21
-#define PITCH_TOLERANCE 4.6
+#define TOLERANCE       0.275
+#define PITCH_TOLERANCE 5.34
 
 @interface MSGRMessagesListViewController ()
 
@@ -39,6 +39,7 @@
     [super viewDidLoad];
     [[self navigationItem] setTitle:@"Messages"];
     [[self navigationItem] setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(sendPicture)]];
+    [[self navigationItem] setBackBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Log out" style:UIBarButtonItemStyleBordered target:nil action:nil]]; // should work (?) but doesn't :(
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -84,7 +85,7 @@
     [_imagePicker setAllowsEditing:NO];
     // [imagePicker setShowsCameraControls:false];
     // [imagePicker setNavigationBarHidden:true];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(checkAttitude:) userInfo:nil repeats:true];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:.35 target:self selector:@selector(checkAttitude:) userInfo:nil repeats:true];
     [self presentViewController:_imagePicker animated:YES completion:nil];
 }
 
@@ -105,7 +106,7 @@
     {
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 300, 300)];
         [label setFont:[UIFont fontWithName:@"Helvetica" size:28.0]];
-        [label setText:@"WINNER"];
+        [label setText:[_message messageText]];
         [_imagePicker setCameraOverlayView:label];
     }
     else

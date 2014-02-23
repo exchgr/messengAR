@@ -10,6 +10,8 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreMotion/CoreMotion.h>
 
+@class MSGRMessage;
+
 @interface MSGRImageViewController : UIViewController <UIImagePickerControllerDelegate, UITextFieldDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
@@ -17,5 +19,6 @@
 @property (strong, nonatomic) CMMotionManager *motionManager;
 @property (nonatomic, assign) bool shouldPresentCamera;
 @property (strong, nonatomic) UITextField *activeTextField;
+@property (strong, nonatomic) MSGRMessage *message;
 
 @end

@@ -19,5 +19,8 @@
 @property (strong, nonatomic) CLLocation *location;
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) NSString *messageText;
+@property (strong, nonatomic) NSString *hintText;
+@property (strong, nonatomic) NSString *sender;
+@property (strong, nonatomic) NSString *recipient;
 
 @end
