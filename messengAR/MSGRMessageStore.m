@@ -72,9 +72,9 @@
 
 - (void)clear
 {
-    for (MSGRMessage *m in allMessages)
+    while ([allMessages count] > 0)
     {
-        [allMessages removeObjectIdenticalTo:m];
+        [allMessages removeObjectAtIndex:0];
     }
 }
 
