@@ -65,7 +65,7 @@
             [imagePicker setAllowsEditing:NO];
             [self presentViewController:imagePicker
                                animated:YES completion:nil];
-            [_locationManager startUpdatingLocation]; // Begin polling location
+            [_locationManager startUpdatingLocation];
         }
     }
 }
@@ -114,9 +114,13 @@
         [_locationManager stopUpdatingLocation];
         [[self navigationController] setNavigationBarHidden:false];
         [_imageView setImage:image];
-        
-        // [self dismissViewControllerAnimated:YES completion:nil];
     }
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
