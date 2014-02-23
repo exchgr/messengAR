@@ -8,6 +8,8 @@
 
 #import "MSGRMessagesListViewController.h"
 #import "MSGRImageViewController.h"
+#import "MSGRMessageStore.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 
 @interface MSGRMessagesListViewController ()
 
@@ -41,30 +43,32 @@
     [self presentViewController:navControl animated:YES completion:nil];
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 0;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return 0;
+    // return [[[MSGRMessageStore sharedStore] allMessages] count];
+    return 3;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-    // Configure the cell...
+    UITableViewCell *cell = [[UITableViewCell alloc] init];
+    [[cell textLabel] setText:[NSString stringWithFormat:@"%d", [indexPath row]]];
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    MSGRMessage *message = [[[MSGRMessageStore sharedStore] allMessages] objectAtIndex:[indexPath row]];
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    [imagePicker setDelegate:self];
+    [imagePicker setSourceType:UIImagePickerControllerSourceTypeCamera];
+    [imagePicker setMediaTypes:@[(NSString *) kUTTypeImage]];
+    [imagePicker setAllowsEditing:NO];
+    // [imagePicker setShowsCameraControls:false];
+    // [imagePicker setNavigationBarHidden:true];
+    [self presentViewController:imagePicker animated:YES completion:nil];
 }
 
 /*

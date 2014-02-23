@@ -1,1 +1,1 @@
-pod 'OpenCV', '~> 2.4.8'
+pod 'AFNetworking', '~> 2.1.0'

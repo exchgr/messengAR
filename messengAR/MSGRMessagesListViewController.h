@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MSGRMessagesListViewController : UITableViewController
+@interface MSGRMessagesListViewController : UITableViewController <UIImagePickerControllerDelegate>
 
 @end

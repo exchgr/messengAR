@@ -13,6 +13,9 @@
 #import <ImageIO/CGImageSource.h>
 #import <ImageIO/CGImageProperties.h>
 #import <CoreLocation/CoreLocation.h>
+#import <CoreMotion/CoreMotion.h>
+#import "MSGRMessage.h"
+#import "MSGRMessageStore.h"
 
 @interface MSGRImageViewController ()
 
@@ -28,6 +31,8 @@
         _locationManager = [CLLocationManager new];
         [_locationManager setDelegate:self];
         [_locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
+        _motionManager = [[CMMotionManager alloc] init];
+        
     }
     return self;
 }
@@ -66,6 +71,9 @@
             [self presentViewController:imagePicker
                                animated:YES completion:nil];
             [_locationManager startUpdatingLocation];
+            [_locationManager startUpdatingHeading];
+            [_motionManager startGyroUpdates];
+            [_motionManager startDeviceMotionUpdates];
         }
     }
 }
@@ -76,44 +84,29 @@
     if ([mediaType isEqualToString:(NSString *)kUTTypeImage])
     {
         UIImage *image = info[UIImagePickerControllerOriginalImage];
-        ALAssetsLibrary *lib = [ALAssetsLibrary new];
-        void (^libBlock)(NSURL*,NSError*) = ^(NSURL *assetURL, NSError *error) {
-            ALAssetsLibrary *al = [ALAssetsLibrary new];
-            [al assetForURL:assetURL resultBlock:^(ALAsset *asset)
-             {
-                 UIImage *image = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullResolutionImage]];
-                 CLLocation *location = [asset valueForProperty:ALAssetPropertyLocation];
-                 [self dismissViewControllerAnimated:YES completion:nil];
-             } failureBlock:nil];
-        };
-        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:info[UIImagePickerControllerMediaMetadata]];
-        NSMutableDictionary *gps = [NSMutableDictionary new];
-        NSDateFormatter *df = [[NSDateFormatter alloc] init];
-        if (_deviceLocation.coordinate.latitude < 0.0) {
-            gps[(__bridge NSString *)kCGImagePropertyGPSLatitude] = [NSNumber numberWithFloat:-_deviceLocation.coordinate.latitude];
-            gps[(__bridge NSString *)kCGImagePropertyGPSLatitudeRef] = @"S";
-        } else {
-            gps[(__bridge NSString *)kCGImagePropertyGPSLatitude] = [NSNumber numberWithFloat:_deviceLocation.coordinate.latitude];
-            gps[(__bridge NSString *)kCGImagePropertyGPSLatitudeRef] = @"N";
-        }
-        if (_deviceLocation.coordinate.longitude < 0.0) {
-            gps[(__bridge NSString *)kCGImagePropertyGPSLongitude] = [NSNumber numberWithFloat:-_deviceLocation.coordinate.longitude];
-            gps[(__bridge NSString *)kCGImagePropertyGPSLongitudeRef] = @"W";
-        } else {
-            gps[(__bridge NSString *)kCGImagePropertyGPSLongitude] = [NSNumber numberWithFloat:_deviceLocation.coordinate.longitude];
-            gps[(__bridge NSString *)kCGImagePropertyGPSLongitudeRef] = @"E";
-        }
-        df.dateFormat = @"yyyy:MM:dd";
-        gps[(__bridge NSString *)kCGImagePropertyGPSDateStamp] = [df stringFromDate:[NSDate date]];
-        df.dateFormat = @"HH:mm:ss";
-        gps[(__bridge NSString *)kCGImagePropertyGPSTimeStamp] = [df stringFromDate:[NSDate date]];
-        dict[(__bridge NSString *)kCGImagePropertyGPSDictionary] = gps;
-        UIImage *img = info[UIImagePickerControllerEditedImage] ? info[UIImagePickerControllerEditedImage] : info[UIImagePickerControllerOriginalImage];
-        [lib writeImageToSavedPhotosAlbum:img.CGImage metadata:dict completionBlock:libBlock];
         
+        CLLocation *location = [_locationManager location];
         [_locationManager stopUpdatingLocation];
+        
+        CLHeading *heading = [_locationManager heading];
+        CLLocationDirection trueHeading = [heading trueHeading];
+        
+        CMDeviceMotion *deviceMotion = [_motionManager deviceMotion];
+        CMAttitude *attitude = [deviceMotion attitude];
+        
+        MSGRMessage *message = [[MSGRMessage alloc] init];
+        [message setLocation:location];
+        [message setImage:image];
+        [message setYaw:[attitude yaw]];
+        [message setPitch:[attitude pitch]];
+        [message setRoll:[attitude roll]];
+        [message setHeading:trueHeading];
+                
+        [[MSGRMessageStore sharedStore] addMessage:message];
+        
         [[self navigationController] setNavigationBarHidden:false];
         [_imageView setImage:image];
+        [self dismissViewControllerAnimated:YES completion:Nil];
     }
 }
 

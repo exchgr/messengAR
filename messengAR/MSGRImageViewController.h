@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <CoreMotion/CoreMotion.h>
 
 @interface MSGRImageViewController : UIViewController <UIImagePickerControllerDelegate, UITextFieldDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) CLLocationManager *locationManager;
-@property (strong, nonatomic) CLLocation *deviceLocation;
+@property (strong, nonatomic) CMMotionManager *motionManager;
 @property (nonatomic, assign) bool shouldPresentCamera;
 @property (strong, nonatomic) UITextField *activeTextField;
 

@@ -8,6 +8,8 @@
 
 #import "MSGRAppDelegate.h"
 #import "MSGRMessagesListViewController.h"
+#import "MSGRMessage.h"
+#import "MSGRMessageStore.h"
 
 @implementation MSGRAppDelegate
 
@@ -19,13 +21,19 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
+    // TODO clean this up
+    MSGRMessage *testMessage = [[MSGRMessage alloc] init];
+    [testMessage setImage:[UIImage imageWithContentsOfFile:@"tcnj.jpg"]];
+    [[MSGRMessageStore sharedStore] addMessage:testMessage];
+    // end TODO lol
+    
     UINavigationController *navControl = [[UINavigationController alloc] init];
     MSGRMessagesListViewController *messagesListControl = [[MSGRMessagesListViewController alloc] init];
     [navControl setViewControllers:@[messagesListControl]];
     [[self window] setRootViewController:navControl];
     
-    // put messages list controller inside
-    // present
+    //
+    //
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
