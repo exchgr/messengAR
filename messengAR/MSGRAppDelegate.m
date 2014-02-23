@@ -10,6 +10,8 @@
 #import "MSGRMessagesListViewController.h"
 #import "MSGRMessage.h"
 #import "MSGRMessageStore.h"
+#import "MSGRUsernameStore.h"
+#import "MSGRPickUsernameController.h"
 
 @implementation MSGRAppDelegate
 
@@ -31,6 +33,13 @@
     MSGRMessagesListViewController *messagesListControl = [[MSGRMessagesListViewController alloc] init];
     [navControl setViewControllers:@[messagesListControl]];
     [[self window] setRootViewController:navControl];
+    
+    if ([[[MSGRUsernameStore sharedStore] usernames] count] == 0)
+    {
+        MSGRPickUsernameController *usernameController = [[MSGRPickUsernameController alloc] init];
+    //    [navControl presentViewController:usernameController animated:true completion:nil];
+        [navControl pushViewController:usernameController animated:false];
+    }
     
     //
     //

@@ -30,6 +30,9 @@
 		AAC1356618B98ECF00FBD829 /* MSGRMessageStore.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC1356518B98ECF00FBD829 /* MSGRMessageStore.m */; };
 		AAC1357918B99C7000FBD829 /* tcnj.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AAC1357818B99C7000FBD829 /* tcnj.jpg */; };
 		AAC1358118B9AF4F00FBD829 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAC1358018B9AF4F00FBD829 /* CoreMotion.framework */; };
+		AAC1358418B9BE8600FBD829 /* MSGRUsernameStore.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC1358318B9BE8600FBD829 /* MSGRUsernameStore.m */; };
+		AAC1358818B9C0AB00FBD829 /* MSGRPickUsernameController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAC1358618B9C0AB00FBD829 /* MSGRPickUsernameController.m */; };
+		AAC1358918B9C0AB00FBD829 /* MSGRPickUsernameController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAC1358718B9C0AB00FBD829 /* MSGRPickUsernameController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +76,11 @@
 		AAC1356518B98ECF00FBD829 /* MSGRMessageStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSGRMessageStore.m; sourceTree = "<group>"; };
 		AAC1357818B99C7000FBD829 /* tcnj.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = tcnj.jpg; path = ../misc/tcnj.jpg; sourceTree = "<group>"; };
 		AAC1358018B9AF4F00FBD829 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		AAC1358218B9BE8600FBD829 /* MSGRUsernameStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSGRUsernameStore.h; sourceTree = "<group>"; };
+		AAC1358318B9BE8600FBD829 /* MSGRUsernameStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSGRUsernameStore.m; sourceTree = "<group>"; };
+		AAC1358518B9C0AB00FBD829 /* MSGRPickUsernameController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSGRPickUsernameController.h; sourceTree = "<group>"; };
+		AAC1358618B9C0AB00FBD829 /* MSGRPickUsernameController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSGRPickUsernameController.m; sourceTree = "<group>"; };
+		AAC1358718B9C0AB00FBD829 /* MSGRPickUsernameController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MSGRPickUsernameController.xib; sourceTree = "<group>"; };
 		BCFE61A3C0854A3888BC302C /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -153,6 +161,11 @@
 				AAC1356218B9892400FBD829 /* MSGRMessage.m */,
 				AAC1356418B98ECF00FBD829 /* MSGRMessageStore.h */,
 				AAC1356518B98ECF00FBD829 /* MSGRMessageStore.m */,
+				AAC1358218B9BE8600FBD829 /* MSGRUsernameStore.h */,
+				AAC1358318B9BE8600FBD829 /* MSGRUsernameStore.m */,
+				AAC1358518B9C0AB00FBD829 /* MSGRPickUsernameController.h */,
+				AAC1358618B9C0AB00FBD829 /* MSGRPickUsernameController.m */,
+				AAC1358718B9C0AB00FBD829 /* MSGRPickUsernameController.xib */,
 				2F6C99DB18B933B90078DDA6 /* Images.xcassets */,
 				2F6C99D818B933B90078DDA6 /* messengAR.xcdatamodeld */,
 				2F6C99CD18B933B90078DDA6 /* Supporting Files */,
@@ -269,6 +282,7 @@
 			files = (
 				2F6C99D118B933B90078DDA6 /* InfoPlist.strings in Resources */,
 				2F6C99DC18B933B90078DDA6 /* Images.xcassets in Resources */,
+				AAC1358918B9C0AB00FBD829 /* MSGRPickUsernameController.xib in Resources */,
 				AAC1357918B99C7000FBD829 /* tcnj.jpg in Resources */,
 				AAC1356018B9723000FBD829 /* MSGRImageViewController.xib in Resources */,
 			);
@@ -326,9 +340,11 @@
 				AAC1356618B98ECF00FBD829 /* MSGRMessageStore.m in Sources */,
 				2F6C99D318B933B90078DDA6 /* main.m in Sources */,
 				2F6C99D718B933B90078DDA6 /* MSGRAppDelegate.m in Sources */,
+				AAC1358418B9BE8600FBD829 /* MSGRUsernameStore.m in Sources */,
 				AAC1355B18B96F7500FBD829 /* MSGRMessagesListViewController.m in Sources */,
 				2F6C99DA18B933B90078DDA6 /* messengAR.xcdatamodeld in Sources */,
 				AAC1355F18B9723000FBD829 /* MSGRImageViewController.m in Sources */,
+				AAC1358818B9C0AB00FBD829 /* MSGRPickUsernameController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
